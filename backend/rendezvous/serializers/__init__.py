@@ -1,0 +1,5 @@
+from .user_serializer import UserSerializer
+from .patient_serializer import PatientSerializer
+from .medecin_serializer import MedecinSerializer
+from .rendezvous_serializer import RendezvousSerializer
+from .auth_serializer import MyTokenObtainPairSerializer
