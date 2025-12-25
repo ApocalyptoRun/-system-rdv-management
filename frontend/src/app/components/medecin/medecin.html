@@ -1,0 +1,21 @@
+<div class="container">
+  <h2>Gestion des Médecins</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Spécialité</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of listeMedecins">
+        <td>{{ m.user.username }}</td>
+        <td>{{ m.specialite }}</td>
+        <td>
+          <button class="btn btn-danger" >Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
