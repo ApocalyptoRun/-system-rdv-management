@@ -1,0 +1,60 @@
+<div class="container py-4">
+  <h2 class="mb-4"><i class="bi bi-calendar-check"></i> Espace Patient</h2>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white">Réserver un créneau</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label">Choisir un Médecin</label>
+            <select class="form-select" [(ngModel)]="nouveauRDV.medecin">
+              <option *ngFor="let m of listeMedecins" [value]="m.id">
+                Dr. {{ m.user.username }} ({{ m.specialite }})
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" [(ngModel)]="nouveauRDV.date">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Heure</label>
+            <input type="time" class="form-control" [(ngModel)]="nouveauRDV.heure">
+          </div>
+          <button class="btn btn-success w-100" (click)="reserver()">Confirmer la réservation</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-light fw-bold">Mes Rendez-vous</div>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Médecin</th>
+                <th>Date & Heure</th>
+                <th>Statut</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of mesRendezVous">
+                <td>Dr. {{ r.medecin.user.username }}</td>
+                <td>{{ r.date }} à {{ r.heure }}</td>
+                <td><span class="badge bg-info">{{ r.statut }}</span></td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-danger" (click)="annulerRDV(r.id)">
+                    <i class="bi bi-x-circle"></i> Annuler
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -21,6 +21,11 @@ export class MedecinService {
     return this.http.post<any>(this.apiUrl, medecinData);
   }
 
+    // 2. Ajouter un nouveau médecin
+  updateMedecin(medecinData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}${medecinData.id}/`, medecinData);
+  }
+
   // 3. Supprimer un médecin
   deleteMedecin(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}${id}/`);

@@ -1,20 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { MedecinService } from '../../services/medecin'; // Vérifie bien le chemin vers ton service
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { MedecinService } from '../../services/medecin';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-medecin',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './medecin.html',
   styleUrl: './medecin.css',
 })
 export class Medecin implements OnInit {
-  // Liste qui stockera les médecins venant du backend
   listeMedecins: any[] = [];
-  chargement: boolean = true;
+  chargement: boolean = false;
 
-  constructor(private medecinService: MedecinService) {}
+  currentMedecin: any = {};
 
-  // Cette méthode s'exécute dès que le composant s'affiche
+  isEditMode: boolean = false;
+
+  constructor(private medecinService: MedecinService,
+    private cdr: ChangeDetectorRef
+  ) { }
+
   ngOnInit(): void {
     this.chargerDonnees();
   }
@@ -23,23 +32,97 @@ export class Medecin implements OnInit {
     this.chargement = true;
     this.medecinService.getMedecins().subscribe({
       next: (data) => {
-        console.log(data)
+        console.log(data);
         this.listeMedecins = data;
         this.chargement = false;
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Erreur lors du chargement des médecins', err);
-        this.chargement = false;
-      }
+      error: () => {this.chargement = false, this.cdr.detectChanges();}
     });
   }
 
-  // supprimerMedecin(id: number) {
-  //   if (confirm('Voulez-vous vraiment supprimer ce médecin ?')) {
-  //     this.medecinService.deleteMedecin(id).subscribe(() => {
-  //       // On rafraîchit la liste après suppression
-  //       this.chargerDonnees();
-  //     });
-  //   }
-  // }
+  prepareAjout() {
+    this.isEditMode = false;
+    console.log("Préparer ajout: ", this.isEditMode);
+    this.currentMedecin = { username: '', email: '', password: '', specialite: '' };
+  }
+
+  prepareEdit(m: any) {
+    this.isEditMode = true;
+    this.currentMedecin = JSON.parse(JSON.stringify(m));
+  }
+
+  enregistrer() {
+    if (this.isEditMode) {
+      console.log("Mode édition activé");
+      this.medecinService.updateMedecin(this.currentMedecin).subscribe(() => {
+        this.chargerDonnees();
+        this.closeModal();
+
+        Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Médecin modifier avec succès',
+        showConfirmButton: false,
+        timer: 1500,
+        toast: true
+      });
+      });
+    } else {
+      this.medecinService.addMedecin(this.currentMedecin).subscribe(() => {
+        this.chargerDonnees();
+        this.closeModal();
+
+        Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Médecin enregistré avec succès',
+        showConfirmButton: false,
+        timer: 1500,
+        toast: true
+      });
+      });
+    }
+  }
+
+
+  supprimer(id: number) {
+  Swal.fire({
+    title: 'Êtes-vous sûr ?',
+    text: "Cette action est irréversible !",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6', // Bleu primaire
+    cancelButtonColor: '#d33',    // Rouge danger
+    confirmButtonText: 'Oui, supprimer !',
+    cancelButtonText: 'Annuler',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // 2. Appel au service seulement si l'utilisateur confirme
+      this.medecinService.deleteMedecin(id).subscribe({
+        next: () => {
+          this.chargerDonnees();
+          Swal.fire(
+            'Supprimé !',
+            'Le médecin a été retiré de la liste.',
+            'success'
+          );
+        },
+        error: () => {
+          Swal.fire(
+            'Erreur',
+            'Impossible de supprimer ce médecin.',
+            'error'
+          );
+        }
+      });
+    }
+  });
+}
+
+  private closeModal() {
+    const closeBtn = document.getElementById('closeModalBtn');
+    closeBtn?.click();
+  }
 }

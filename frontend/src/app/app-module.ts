@@ -3,21 +3,26 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { Patient } from './components/patient/patient';
-import { Medecin } from './components/medecin/medecin';
+import { jwtInterceptor } from './interceptors/jwt-interceptor';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
-    App,
-    Patient,
-    Medecin
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
-    provideBrowserGlobalErrorListeners()
+    provideBrowserGlobalErrorListeners(),
+
+    provideHttpClient(
+      withInterceptors([jwtInterceptor])
+    )
   ],
   bootstrap: [App]
 })
