@@ -1,68 +1,71 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, inject, Component, OnInit } from '@angular/core';
 import { MedecinService } from '../../services/medecin';
-import { Rdv } from '../../services/rdv'; // À créer
+import { RdvService } from '../../services/rdv';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Patient } from '../../services/patient';
 
 @Component({
-  selector: 'app-patient-dashboard',
+  selector: 'app-patient',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './patient.html',
-  styleUrl: './patient.css'
+  styleUrls: ['./patient.css']
 })
 export class PatientComponent implements OnInit {
-  listeMedecins: any[] = [];
-  mesRendezVous: any[] = [];
-  selectedMedecin: any = null;
+  private patientService = inject(Patient);
   
-  // Pour le formulaire de réservation
-  nouveauRDV = {
-    date: '',
-    heure: '',
-    motif: '',
-    medecin: null
-  };
+  medecins: any[] = [];
+  creneaux: any[] = [];
+  medecinSelectionne: any = null;
 
-  constructor(
-    private medecinService: MedecinService,
-    private rdvService: Rdv
-  ) {}
+  mesRdv: any[] = [];
+
+  constructor(private medecinService: MedecinService,
+    private rdvService: RdvService,
+    private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.chargerMedecins();
-    this.chargerMesRDV();
+    this.medecinService.getMedecins().subscribe(data => {
+      // console.log(data);
+      this.medecins = data;
+      this.cdr.detectChanges();
+    });
+
+    this.chargerMesRdv();
   }
 
-  chargerMedecins() {
-    this.medecinService.getMedecins().subscribe(data => this.listeMedecins = data);
+  chargerMesRdv() {
+    this.patientService.getMesRendezVous().subscribe(data => this.mesRdv = data);
   }
 
-  chargerMesRDV() {
-    this.rdvService.getMesRendezVous().subscribe((data: any[]) => this.mesRendezVous = data);
+  choisirMedecin(medecin: any) {
+    this.medecinSelectionne = medecin;
+    this.rdvService.getCreneauxDisponibles(medecin.id).subscribe(data => {
+      this.creneaux = data;
+      this.cdr.detectChanges();
+    });
   }
 
-  reserver() {
-    this.rdvService.creerRDV(this.nouveauRDV).subscribe({
+  validerRdv(creneauId: number) {
+    const rdv = {
+      creneau: creneauId,
+      patient: localStorage.getItem('user_id_parent'), 
+      urgent: false
+    };
+
+    this.rdvService.reserver(rdv).subscribe({
       next: () => {
         Swal.fire('Succès', 'Rendez-vous réservé !', 'success');
-        this.chargerMesRDV();
+        this.choisirMedecin(this.medecinSelectionne); // Rafraîchir les créneaux
       },
-      error: () => Swal.fire('Erreur', 'Ce créneau est déjà pris', 'error')
+      error: (err) => Swal.fire('Erreur', 'Ce créneau n\'est plus disponible', 'error')
     });
   }
 
-  annulerRDV(id: number) {
-    Swal.fire({
-      title: 'Annuler ce rendez-vous ?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Oui, annuler'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.rdvService.deleteRDV(id).subscribe(() => this.chargerMesRDV());
-      }
-    });
+  annulerRdv(id: number) {
+    // Logique Swal.fire puis appel à :
+    // this.patientService.annulerRendezVous(id).subscribe(...)
   }
 }

@@ -1,0 +1,18 @@
+.dropdown-menu {
+  border-radius: 12px;
+  min-width: 200px;
+}
+
+.dropdown-item {
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Effet au survol du bouton de profil */
+.dropdown-toggle::after {
+  vertical-align: middle;
+}

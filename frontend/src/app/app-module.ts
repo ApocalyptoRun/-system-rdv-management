@@ -7,6 +7,7 @@ import { jwtInterceptor } from './interceptors/jwt-interceptor';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { NavBar } from './components/nav-bar/nav-bar';
 
 @NgModule({
   declarations: [

@@ -2,31 +2,19 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class Rdv {
-  private apiUrl = 'http://127.0.0.1:8000/api/rendezvous'; // Adaptez selon votre urls.py
+@Injectable({ providedIn: 'root' })
+export class RdvService {
+  private apiUrl = 'http://127.0.0.1:8000/api';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // Liste des RDV du patient connecté
-  getMesRendezVous(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/mes-rdv/`);
+  // Récupérer les créneaux DISPONIBLES d'un médecin précis
+  getCreneauxDisponibles(medecinId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/creneaux/?medecin_id=${medecinId}&dispo=true`);
   }
 
-  // Réserver un nouveau créneau
-  creerRDV(rdvData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/`, rdvData);
-  }
-
-  // Modifier un RDV existant
-  modifierRDV(id: number, rdvData: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/`, rdvData);
-  }
-
-  // Annuler (Supprimer) un RDV
-  deleteRDV(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}/`);
+  // Créer le rendez-vous (C'est ici que le créneau sera verrouillé côté Backend)
+  reserver(rdvData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/rendezvous/`, rdvData);
   }
 }

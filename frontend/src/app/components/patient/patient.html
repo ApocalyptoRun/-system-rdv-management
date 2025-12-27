@@ -1,60 +1,153 @@
-<div class="container py-4">
-  <h2 class="mb-4"><i class="bi bi-calendar-check"></i> Espace Patient</h2>
-
-  <div class="row">
-    <div class="col-md-4">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-primary text-white">Réserver un créneau</div>
-        <div class="card-body">
-          <div class="mb-3">
-            <label class="form-label">Choisir un Médecin</label>
-            <select class="form-select" [(ngModel)]="nouveauRDV.medecin">
-              <option *ngFor="let m of listeMedecins" [value]="m.id">
-                Dr. {{ m.user.username }} ({{ m.specialite }})
-              </option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Date</label>
-            <input type="date" class="form-control" [(ngModel)]="nouveauRDV.date">
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Heure</label>
-            <input type="time" class="form-control" [(ngModel)]="nouveauRDV.heure">
-          </div>
-          <button class="btn btn-success w-100" (click)="reserver()">Confirmer la réservation</button>
-        </div>
+<div class="container-fluid bg-light min-vh-100 py-4">
+  <div class="container">
+    <div class="row align-items-center mb-5">
+      <div class="col">
+        <h1 class="h3 fw-bold text-dark mb-1">Espace Patient</h1>
+        <!-- <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item text-primary">Accueil</li>
+            <li class="breadcrumb-item active">Réservation</li>
+          </ol>
+        </nav> -->
       </div>
+      <!-- <div class="col-auto">
+        <button class="btn btn-white shadow-sm border rounded-pill px-4">
+          <i class="bi bi-arrow-clockwise me-2"></i>Actualiser
+        </button>
+      </div> -->
     </div>
 
-    <div class="col-md-8">
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-light fw-bold">Mes Rendez-vous</div>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead>
-              <tr>
-                <th>Médecin</th>
-                <th>Date & Heure</th>
-                <th>Statut</th>
-                <th class="text-end">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let r of mesRendezVous">
-                <td>Dr. {{ r.medecin.user.username }}</td>
-                <td>{{ r.date }} à {{ r.heure }}</td>
-                <td><span class="badge bg-info">{{ r.statut }}</span></td>
-                <td class="text-end">
-                  <button class="btn btn-sm btn-outline-danger" (click)="annulerRDV(r.id)">
-                    <i class="bi bi-x-circle"></i> Annuler
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+    <div class="bg-white p-2 shadow-sm rounded-4 mb-4 d-inline-flex border">
+      <ul class="nav nav-pills" id="pills-tab" role="tablist">
+        <li class="nav-item">
+          <button class="nav-link active rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#reserver">
+            <i class="bi bi-plus-circle me-2"></i>Nouvelle Réservation
+          </button>
+        </li>
+        <li class="nav-item ms-2">
+          <button class="nav-link rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#mes-rdv">
+            <i class="bi bi-clock-history me-2"></i>Mes Rendez-vous
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="tab-content pt-2">
+      <div class="tab-pane fade show active" id="reserver">
+        <div class="row g-4">
+          
+          <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+              <div class="card-header bg-white border-0 py-3">
+                <h5 class="fw-bold mb-0">1. Sélectionner un praticien</h5>
+              </div>
+              <div class="list-group list-group-flush overflow-auto" style="max-height: 600px;">
+                <button *ngFor="let m of medecins" 
+                  (click)="choisirMedecin(m)"
+                  class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center"
+                  [class.bg-primary-subtle]="medecinSelectionne?.id === m.id">
+                  <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                    <i class="bi bi-person-fill fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="mb-0 fw-bold">Dr. {{ m.user.username }}</h6>
+                    <small class="text-primary fw-medium">{{ m.specialite }}</small>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100 min-vh-50">
+              <div class="card-body p-4 text-center" *ngIf="!medecinSelectionne">
+                <div class="py-5">
+                  <i class="bi bi-arrow-left-circle display-1 text-light"></i>
+                  <p class="text-muted mt-3">Veuillez sélectionner un médecin dans la liste pour voir les disponibilités.</p>
+                </div>
+              </div>
+
+              <div class="card-body p-4" *ngIf="medecinSelectionne">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                  <h5 class="fw-bold mb-0">2. Créneaux disponibles</h5>
+                  <span class="badge bg-primary-subtle text-primary rounded-pill px-3">
+                    Dr. {{ medecinSelectionne.user.username }}
+                  </span>
+                </div>
+
+                <div class="row g-3" *ngIf="creneaux.length > 0">
+                  <div class="col-sm-4 col-md-3" *ngFor="let c of creneaux">
+                    <div class="card h-100 border text-center p-2 hover-shadow transition" 
+                         role="button" (click)="validerRdv(c.id)">
+                      <div class="card-body p-2">
+                        <div class="text-muted small mb-1">{{ c.date | date:'EEEE dd MMM' }}</div>
+                        <div class="h5 fw-bold text-primary mb-0">{{ c.heure_debut }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="creneaux.length === 0" class="text-center py-5">
+                  <i class="bi bi-calendar-x display-4 text-light"></i>
+                  <p class="text-muted">Aucune disponibilité pour le moment.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+<div class="tab-pane fade" id="mes-rdv">
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="list-group list-group-flush">
+      
+      <div class="list-group-item bg-light fw-bold py-3 px-4">
+        <div class="row">
+          <div class="col-6 col-md-4">Motif / ID</div>
+          <div class="col-md-4 d-none d-md-block text-center">Date de création</div>
+          <div class="col-6 col-md-4 text-end">Actions</div>
+        </div>
+      </div>
+
+      @for (r of mesRdv; track r.id) {
+        <div class="list-group-item py-3 px-4 transition-hover">
+          <div class="row align-items-center">
+            
+            <div class="col-6 col-md-4">
+              <div class="fw-bold text-dark">{{ r.motif || 'Consultation' }}</div>
+              <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Réf: #{{ r.id }}</small>
+            </div>
+
+            <div class="col-md-4 d-none d-md-block text-center">
+              <span class="small text-secondary">
+                <i class="bi bi-clock-history me-1"></i>
+                {{ r.cree_le | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+            </div>
+
+            <div class="col-6 col-md-4 text-end">
+              <button class="btn btn-sm btn-light border me-2">
+                <i class="bi bi-eye"></i> <span class="d-none d-sm-inline ms-1">Voir</span>
+              </button>
+              <button class="btn btn-sm btn-outline-danger border-0" (click)="annulerRdv(r.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      } @empty {
+        <div class="py-5 text-center text-muted">
+          <i class="bi bi-calendar-x fs-1 d-block mb-2 opacity-25"></i>
+          <p>Aucun rendez-vous trouvé.</p>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>
+
+
     </div>
   </div>
 </div>
