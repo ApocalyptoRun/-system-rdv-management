@@ -1,153 +1,115 @@
-<div class="container-fluid bg-light min-vh-100 py-4">
-  <div class="container">
-    <div class="row align-items-center mb-5">
-      <div class="col">
-        <h1 class="h3 fw-bold text-dark mb-1">Espace Patient</h1>
-        <!-- <nav aria-label="breadcrumb">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item text-primary">Accueil</li>
-            <li class="breadcrumb-item active">Réservation</li>
-          </ol>
-        </nav> -->
-      </div>
-      <!-- <div class="col-auto">
-        <button class="btn btn-white shadow-sm border rounded-pill px-4">
-          <i class="bi bi-arrow-clockwise me-2"></i>Actualiser
-        </button>
-      </div> -->
-    </div>
+<div class="container-fluid py-4">
+  <div class="row justify-content-center g-4">
 
-    <div class="bg-white p-2 shadow-sm rounded-4 mb-4 d-inline-flex border">
-      <ul class="nav nav-pills" id="pills-tab" role="tablist">
-        <li class="nav-item">
-          <button class="nav-link active rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#reserver">
-            <i class="bi bi-plus-circle me-2"></i>Nouvelle Réservation
-          </button>
-        </li>
-        <li class="nav-item ms-2">
-          <button class="nav-link rounded-pill px-4" data-bs-toggle="pill" data-bs-target="#mes-rdv">
-            <i class="bi bi-clock-history me-2"></i>Mes Rendez-vous
-          </button>
-        </li>
-      </ul>
-    </div>
 
-    <div class="tab-content pt-2">
-      <div class="tab-pane fade show active" id="reserver">
-        <div class="row g-4">
-          
-          <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 h-100">
-              <div class="card-header bg-white border-0 py-3">
-                <h5 class="fw-bold mb-0">1. Sélectionner un praticien</h5>
-              </div>
-              <div class="list-group list-group-flush overflow-auto" style="max-height: 600px;">
-                <button *ngFor="let m of medecins" 
-                  (click)="choisirMedecin(m)"
-                  class="list-group-item list-group-item-action border-0 py-3 px-4 d-flex align-items-center"
-                  [class.bg-primary-subtle]="medecinSelectionne?.id === m.id">
-                  <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
-                    <i class="bi bi-person-fill fs-5"></i>
-                  </div>
-                  <div>
-                    <h6 class="mb-0 fw-bold">Dr. {{ m.user.username }}</h6>
-                    <small class="text-primary fw-medium">{{ m.specialite }}</small>
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 h-100 min-vh-50">
-              <div class="card-body p-4 text-center" *ngIf="!medecinSelectionne">
-                <div class="py-5">
-                  <i class="bi bi-arrow-left-circle display-1 text-light"></i>
-                  <p class="text-muted mt-3">Veuillez sélectionner un médecin dans la liste pour voir les disponibilités.</p>
-                </div>
-              </div>
-
-              <div class="card-body p-4" *ngIf="medecinSelectionne">
-                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-                  <h5 class="fw-bold mb-0">2. Créneaux disponibles</h5>
-                  <span class="badge bg-primary-subtle text-primary rounded-pill px-3">
-                    Dr. {{ medecinSelectionne.user.username }}
-                  </span>
-                </div>
-
-                <div class="row g-3" *ngIf="creneaux.length > 0">
-                  <div class="col-sm-4 col-md-3" *ngFor="let c of creneaux">
-                    <div class="card h-100 border text-center p-2 hover-shadow transition" 
-                         role="button" (click)="validerRdv(c.id)">
-                      <div class="card-body p-2">
-                        <div class="text-muted small mb-1">{{ c.date | date:'EEEE dd MMM' }}</div>
-                        <div class="h5 fw-bold text-primary mb-0">{{ c.heure_debut }}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div *ngIf="creneaux.length === 0" class="text-center py-5">
-                  <i class="bi bi-calendar-x display-4 text-light"></i>
-                  <p class="text-muted">Aucune disponibilité pour le moment.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white p-3">
+          <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Réservation de consultation</h5>
         </div>
-      </div>
-
-<div class="tab-pane fade" id="mes-rdv">
-  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-    <div class="list-group list-group-flush">
-      
-      <div class="list-group-item bg-light fw-bold py-3 px-4">
-        <div class="row">
-          <div class="col-6 col-md-4">Motif / ID</div>
-          <div class="col-md-4 d-none d-md-block text-center">Date de création</div>
-          <div class="col-6 col-md-4 text-end">Actions</div>
-        </div>
-      </div>
-
-      @for (r of mesRdv; track r.id) {
-        <div class="list-group-item py-3 px-4 transition-hover">
-          <div class="row align-items-center">
-            
-            <div class="col-6 col-md-4">
-              <div class="fw-bold text-dark">{{ r.motif || 'Consultation' }}</div>
-              <small class="text-muted text-uppercase" style="font-size: 0.7rem;">Réf: #{{ r.id }}</small>
+        <div class="card-body p-4">
+          <form [formGroup]="rdvForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Médecin</label>
+                <select class="form-select" formControlName="medecinId" (change)="onParamsChange()">
+                  <option value="">Choisir un médecin...</option>
+                  <option *ngFor="let m of medecins" [value]="m.id">Dr. {{ m.user.username }}</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">Date souhaitée</label>
+                <input type="date" class="form-control" formControlName="date" (change)="onParamsChange()">
+              </div>
             </div>
 
-            <div class="col-md-4 d-none d-md-block text-center">
-              <span class="small text-secondary">
-                <i class="bi bi-clock-history me-1"></i>
-                {{ r.cree_le | date:'dd/MM/yyyy HH:mm' }}
-              </span>
+            <div *ngIf="creneaux.length > 0; else noSlots" class="mt-4">
+              <label class="form-label fw-bold mb-3 text-primary">Horaires disponibles</label>
+              <div class="row g-2 overflow-auto" style="max-height: 250px;">
+                <div class="col-6 col-sm-4 col-md-3" *ngFor="let slot of creneaux">
+                  <input type="radio" class="btn-check" [id]="'slot-' + slot.id" [value]="slot.id" formControlName="creneauId" [disabled]="!slot.est_disponible">
+                  <label class="btn btn-outline-primary w-100 py-2 border-2" [for]="'slot-' + slot.id" 
+                         [ngClass]="{'opacity-25 bg-light': !slot.est_disponible}">
+                    {{ slot.heure_debut | slice:0:5 }}
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <div class="col-6 col-md-4 text-end">
-              <button class="btn btn-sm btn-light border me-2">
-                <i class="bi bi-eye"></i> <span class="d-none d-sm-inline ms-1">Voir</span>
-              </button>
-              <button class="btn btn-sm btn-outline-danger border-0" (click)="annulerRdv(r.id)">
-                <i class="bi bi-trash"></i>
+            <ng-template #noSlots>
+              <div *ngIf="rdvForm.value.date" class="alert alert-info mt-3 border-0 shadow-sm">
+                <i class="bi bi-info-circle me-2"></i>Aucun créneau configuré pour cette date.
+              </div>
+            </ng-template>
+
+            <hr class="my-4">
+
+            <div class="mb-3">
+              <div class="form-check form-switch mb-2">
+                <input class="form-check-input" type="checkbox" id="urgent" formControlName="urgent">
+                <label class="form-check-label text-danger fw-bold" for="urgent">Signaler une urgence</label>
+              </div>
+              <textarea class="form-control bg-light" formControlName="motif" rows="2" placeholder="Motif de la visite..."></textarea>
+            </div>
+
+            <div class="d-grid mt-4">
+              <button type="submit" class="btn btn-primary btn-lg fw-bold" [disabled]="rdvForm.invalid">
+                Valider ma réservation
               </button>
             </div>
-
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 h-100">
+        <div class="card-header bg-dark text-white p-3">
+          <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Mes Rendez-vous</h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Médecin</th>
+                  <th>Date & Heure</th>
+                  <th>Statut</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let rdv of mesRdv">
+                  <td>
+                    <div class="fw-bold">Dr. {{ rdv.creneau_details?.medecin_nom || 'Médecin' }}</div>
+                    <small *ngIf="rdv.urgent" class="badge bg-danger">Urgent</small>
+                  </td>
+                  <td>
+                    <div>{{ rdv.creneau_details?.date | date:'dd/MM/yyyy' }}</div>
+                    <small class="text-muted">{{ rdv.creneau_details?.heure_debut | slice:0:5 }}</small>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill bg-success-subtle text-success border border-success">Confirmé</span>
+                  </td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" (click)="annulerRdv(rdv.id)">
+                      <i class="bi bi-trash">Annuler</i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="mesRdv.length === 0">
+                  <td colspan="4" class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar-x d-block mb-2 fs-2"></i>
+                    Vous n'avez pas encore de rendez-vous.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      } @empty {
-        <div class="py-5 text-center text-muted">
-          <i class="bi bi-calendar-x fs-1 d-block mb-2 opacity-25"></i>
-          <p>Aucun rendez-vous trouvé.</p>
-        </div>
-      }
-
+      </div>
     </div>
-  </div>
-</div>
 
 
-    </div>
   </div>
 </div>

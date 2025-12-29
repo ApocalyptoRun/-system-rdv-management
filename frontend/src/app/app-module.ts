@@ -6,7 +6,7 @@ import { App } from './app';
 import { jwtInterceptor } from './interceptors/jwt-interceptor';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NavBar } from './components/nav-bar/nav-bar';
 
 @NgModule({
@@ -16,7 +16,8 @@ import { NavBar } from './components/nav-bar/nav-bar';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

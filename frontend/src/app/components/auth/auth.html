@@ -10,9 +10,9 @@
       <div *ngIf="!isLoginMode">
         <div class="mb-3">
           <label class="form-label small fw-bold">Type de compte</label>
-          <select class="form-select" name="role" [(ngModel)]="registerData.role">
+          <select class="form-select" name="role" [(ngModel)]="registerData.role" value="PATIENT">
             <option value="PATIENT">Patient</option>
-            <option value="MEDECIN">Médecin</option>
+            <!-- <option value="MEDECIN">Médecin</option> -->
           </select>
         </div>
 

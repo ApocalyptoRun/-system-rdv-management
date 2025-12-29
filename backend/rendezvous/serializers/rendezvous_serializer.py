@@ -1,11 +1,16 @@
 from rest_framework import serializers
 from rendezvous.models import Rendezvous, Creneau
+from rendezvous.serializers.creneau_serializer import CreneauSerializer
 
 
 class RendezvousSerializer(serializers.ModelSerializer):
+    # On ajoute ceci pour avoir les détails du créneau (date, heure) dans les GET
+    # Mais on garde 'creneau' en ID pour les POST (écriture)
+    creneau_details = CreneauSerializer(source='creneau', read_only=True)
+
     class Meta:
         model = Rendezvous
-        fields = '__all__'
+        fields = ['id', 'patient', 'creneau', 'creneau_details', 'urgent', 'motif', 'cree_le']
 
     def validate_creneau(self, value):
         if not value.est_disponible:
@@ -13,9 +18,8 @@ class RendezvousSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        # 1. Créer le RDV
         rdv = super().create(validated_data)
-        # 2. Marquer le créneau comme indisponible immédiatement
+        # Logique de mise à jour de disponibilité
         creneau = rdv.creneau
         creneau.est_disponible = False
         creneau.save()

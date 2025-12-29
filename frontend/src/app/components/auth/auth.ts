@@ -66,7 +66,7 @@ export class AuthComponent {
   private redirectUser(role: string) {
     // Vérifie que les strings correspondent exactement à ce que renvoie Django (souvent en majuscules)
     if (role === 'PATIENT') this.router.navigate(['/patients']);
-    else if (role === 'ADMIN') this.router.navigate(['/medecins']);
+    else if (role === 'MEDECIN') this.router.navigate(['/medecins']);
     else this.router.navigate(['/auth']);
   }
 
